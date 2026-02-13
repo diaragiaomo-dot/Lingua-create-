@@ -1,0 +1,5 @@
+{
+  "name": "LinguaVox AI",
+  "description": "A world-class multilingual text-to-speech application powered by Gemini 2.5. Generate lifelike speech in various languages and voices.",
+  "requestFramePermissions": []
+}
