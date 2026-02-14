@@ -14,8 +14,32 @@ export const generateSpeech = async (
 
   const ai = new GoogleGenAI({ apiKey: API_KEY });
 
+  // Custom pronunciation rules based on language
+  let pronunciationRules = "";
+  
+  if (languageName === "Italian") {
+     // In Italian, 'W' often means 'Viva' (Long live) in exclamations, or 'V' in names, or 'U' in loanwords.
+     pronunciationRules = `
+     Pronunciation Rules for 'W':
+     1. If 'W' appears as an isolated capital letter exclamation (e.g., 'W l'Italia', 'W la pizza'), pronounce it as the word 'Viva'.
+     2. If 'W' is in a German/Italian name (e.g., 'Walter'), pronounce it as 'V'.
+     3. If 'W' is in an English loanword (e.g., 'Web', 'Weekend'), pronounce it naturally as in English.
+     `;
+  } else if (languageName === "German") {
+     pronunciationRules = "Pronounce the letter 'w' as 'v' (like in 'vet').";
+  }
+
   // Prompt engineering to force the language
-  const finalPrompt = `Say the following text in ${languageName}. If the text is already in ${languageName}, just read it as is. Do not add any introductory text, just say the text: "${text}"`;
+  const finalPrompt = `
+    Task: Read the following text aloud in ${languageName}.
+    
+    Instructions:
+    1. Only output the spoken audio of the text. Do not add introductory phrases like "Here is the text".
+    2. ${pronunciationRules}
+    3. Read the text with the tone matching the voice personality.
+
+    Text to read: "${text}"
+  `;
 
   try {
     const response = await ai.models.generateContent({
